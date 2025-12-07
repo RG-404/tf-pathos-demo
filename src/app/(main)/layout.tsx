@@ -1,13 +1,16 @@
 import { DemoProvider } from "@/context/DemoProvider";
 import Link from "next/link";
 import React from "react";
+
 import { FaAsterisk } from "react-icons/fa6";
+
 import {
   HiOutlineUser,
   HiOutlineShoppingCart,
   HiOutlineExclamation,
   HiOutlineClock,
 } from "react-icons/hi";
+
 import {
   HiOutlineChevronRight,
   HiOutlineMagnifyingGlass,
@@ -23,7 +26,6 @@ const Dashboard = ({
       <div className="fixed inset-0 bg-neutral-200 z-50 flex items-center justify-center text-black/30 xl:hidden">
         THIS IS A DESKTOP APPLICATION. PLEASE RESTORE SCREEN.
       </div>
-
       <div className="flex min-h-screen">
         <div className="flex flex-col bg-blue-900 min-w-60 w-60">
           <div className="sticky top-0">

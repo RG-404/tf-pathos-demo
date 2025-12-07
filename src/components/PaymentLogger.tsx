@@ -3,7 +3,13 @@
 import { useState, useMemo, ChangeEvent, KeyboardEvent } from "react";
 import { HiOutlineInformationCircle } from "react-icons/hi";
 
-export default function PaymentLogger({ totalPrice }: { totalPrice: number }) {
+export default function PaymentLogger({
+  totalPrice,
+  handleLog,
+}: {
+  totalPrice: number;
+  handleLog: (amount: number) => void;
+}) {
   // Amounts
   const [upi, setUpi] = useState("");
   const [cash, setCash] = useState("");
@@ -132,7 +138,13 @@ export default function PaymentLogger({ totalPrice }: { totalPrice: number }) {
 
           {/* PAYMENT COMPLETE BUTTON */}
           {remaining === 0 && (
-            <button className="mt-4 w-full bg-green-600 text-white py-2 rounded-xl font-semibold hover:bg-green-700 transition">
+            <button
+              onClick={() => {
+                console.log("PAID FROM MODAL:", totalPaid);
+                handleLog(totalPaid);
+              }}
+              className="mt-4 w-full bg-green-600 text-white py-2 rounded-xl font-semibold hover:bg-green-700 transition"
+            >
               Payment Complete
             </button>
           )}

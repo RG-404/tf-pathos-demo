@@ -124,6 +124,28 @@ const Case = () => {
     });
   };
 
+  const handleCreateNewCaseWithPayment = (amount: number) => {
+    console.log("Paid: ", amount);
+    createCase({
+      amount: total,
+      paymentType: "postpaid",
+      paymentLog: [
+        {
+          cash: amount,
+          bank: 0,
+          bankRef: "",
+          upi: 0,
+          upiRef: "",
+          time: "",
+        },
+      ],
+      subjectName: name,
+      test: selectedTestIds,
+      subjectPhoneNumber: phone,
+    });
+    router.push("/case");
+  };
+
   return (
     <>
       {isPaymentLoggerOpen && (
@@ -135,7 +157,10 @@ const Case = () => {
             className="animate-modal-slide-in"
             onClick={(e) => e.stopPropagation()}
           >
-            <PaymentLogger totalPrice={dueNow} />
+            <PaymentLogger
+              totalPrice={dueNow}
+              handleLog={handleCreateNewCaseWithPayment}
+            />
           </div>
         </div>
       )}
@@ -162,7 +187,7 @@ const Case = () => {
                     handleCreateNewCase();
                     console.log("DONE");
                   }
-                  
+
                   router.push("/case");
                 }}
                 className="bg-linear-to-t from-orange-700 to-orange-600 text-white w-full mx-5 h-12 uppercase font-bold rounded-xl cursor-pointer"

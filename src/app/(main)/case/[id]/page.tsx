@@ -13,13 +13,6 @@ import { useDemoContext } from "@/context/DemoProvider"; // Your context import
 import ReportFlowSheet from "@/components/ReportFlowSheet";
 import { testListData } from "@/data/DemoData"; // make sure this is imported
 
-const referenceMap = {
-  "g/dL": "13 - 17",
-  "g/L": "130 - 170",
-  "mmol/L": "8.1 - 10.5",
-  "μmol/L": "8100 - 10500",
-};
-
 export default function CaseDetailsPage() {
   const params = useParams();
   const id = parseInt(params.id as string, 10);
@@ -49,21 +42,46 @@ export default function CaseDetailsPage() {
   const labs = Array.from(new Set(tests.map((t) => t.category)));
 
   // Payment
-  const payment = caseData
-    ? (() => {
-        const total = caseData.amount; // total including tax
-        const amount = +(total / 1.18).toFixed(2); // base amount
-        const tax = +(total - amount).toFixed(2); // tax portion
-        return {
-          method: caseData.paymentType,
-          amount,
-          tax,
-          total,
-          paid: 0,
-          balance: total,
-        };
-      })()
-    : { method: "-", amount: 0, tax: 0, total: 0, paid: 0, balance: 0 };
+  const payment = (() => {
+    if (!caseData) {
+      return {
+        method: "-",
+        amount: 0,
+        tax: 0,
+        total: 0,
+        paid: 0,
+        balance: 0,
+      };
+    }
+
+    const total = caseData.amount;
+
+    // base & tax breakdown
+    const amount = +(total / 1.18).toFixed(2);
+    const tax = +(total - amount).toFixed(2);
+
+    // compute paid from log safely
+    const paid =
+      caseData.paymentLog?.reduce((sum, entry) => {
+        return (
+          sum +
+          (Number(entry.cash) || 0) +
+          (Number(entry.bank) || 0) +
+          (Number(entry.upi) || 0)
+        );
+      }, 0) || 0;
+
+    const balance = Math.max(total - paid, 0);
+
+    return {
+      method: caseData.paymentType,
+      amount,
+      tax,
+      total,
+      paid,
+      balance,
+    };
+  })();
 
   const [tab, setTab] = useState<
     "overview" | "timeline" | "results" | "download"
@@ -103,7 +121,12 @@ export default function CaseDetailsPage() {
             </div>
           </div>
           <div>
-            <button className="bg-blue-900 text-white px-8 h-8 text-sm uppercase rounded-xl">
+            <button
+              onClick={() => {
+                console.log(caseData);
+              }}
+              className="bg-blue-900 text-white px-8 h-8 text-sm uppercase rounded-xl"
+            >
               Log
             </button>
           </div>
